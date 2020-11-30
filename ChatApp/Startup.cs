@@ -141,7 +141,8 @@ namespace ChatApp
                     {
                         options.Transports = HttpTransportType.WebSockets;
                     });
-                } );
+                }
+            );
 
             app.MapWhen(x => !x.Request.Path.Value.StartsWith("/users"), builder =>
             {

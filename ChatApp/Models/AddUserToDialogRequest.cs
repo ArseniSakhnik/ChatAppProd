@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Models
 {
+    /// <summary>
+    /// Класс запроса на добавления пользователя в диалог
+    /// </summary>
     public class AddUserToDialogRequest
     {
         [Required]

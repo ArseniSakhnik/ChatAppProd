@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Helpers
 {
+    /// <summary>
+    /// Класс для связи с нашей базой данных
+    /// </summary>
     public class DataContext : DbContext
     {
         public DbSet<User> Users { get; set; }
@@ -17,7 +20,10 @@ namespace ChatApp.Helpers
         {
             Database.EnsureCreated();
         }
-
+        /// <summary>
+        /// Метод, который определяет ограничения и инициализирует начальные данные
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

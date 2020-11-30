@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Models
 {
+    /// <summary>
+    /// Класс ответа на запрос аутентификации
+    /// </summary>
     public class AuthenticateResponse
     {
         public int Id { get; set; }

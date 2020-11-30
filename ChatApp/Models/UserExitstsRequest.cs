@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Models
 {
+    /// <summary>
+    /// Класс запроса на проверку пользователя на существование
+    /// </summary>
     public class UserExitstsRequest
     {
         [Required]

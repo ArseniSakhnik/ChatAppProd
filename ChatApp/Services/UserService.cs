@@ -15,14 +15,15 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Services
 {
-
+    /// <summary>
+    /// Интерфейс, определяющий сервис, с которым будет работать DialogHub и UsersController
+    /// </summary>
     public interface IUserService
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         AuthenticateResponse RefreshToken(string token, string ipAddress);
         bool RevokeToken(string token, string ipAddress);
         IEnumerable<User> GetAll();
-        User GetById(int id);
         bool Registration(RegistrationRequest model);
         bool UserExists(string username);
         bool AddUserToDialog(string username, int dialogId);
@@ -30,6 +31,9 @@ namespace ChatApp.Services
         List<string> GetNamesOfParticipiantsInDialogue(int dialogId);
     }
 
+    /// <summary>
+    /// Класс для работы с пользователями и их токенами
+    /// </summary>
     public class UserService : IUserService
     {
         private DataContext _context;
@@ -42,7 +46,11 @@ namespace ChatApp.Services
             _context = context;
             _appSettings = appSettings.Value;
         }
-
+        /// <summary>
+        /// Регистрация пользователя
+        /// </summary>
+        /// <param name="model">Модель запроса регистрации</param>
+        /// <returns>true, если пользователь был зарегестрирован</returns>
         public bool Registration(RegistrationRequest model)
         {
             var user = _context.Users.SingleOrDefault(u => u.Username == model.Username);
@@ -61,7 +69,12 @@ namespace ChatApp.Services
             _context.SaveChanges();
             return true;
         }
-
+        /// <summary>
+        /// Аутентификация пользователя
+        /// </summary>
+        /// <param name="model">Аутентификационный запрос</param>
+        /// <param name="ipAddress">IP-адрес пользователя, который совершает аутентификацию</param>
+        /// <returns>Ответ в виде модели AuthenticateResponse</returns>
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
             //получаем пользователя из базы данных
@@ -86,6 +99,12 @@ namespace ChatApp.Services
             return new AuthenticateResponse(user, jwtToken, refreshToken.Token);
         }
 
+        /// <summary>
+        /// Обновления токена
+        /// </summary>
+        /// <param name="token">Активный токен</param>
+        /// <param name="ipAddress">IP-адрес, с которого отправляется запрос</param>
+        /// <returns>Ответ в виде модели AuthenticateResponse</returns>
         public AuthenticateResponse RefreshToken(string token, string ipAddress)
         {
             //находим пользователя, у которого имеется токен, сохраненный в куках контекса
@@ -119,6 +138,12 @@ namespace ChatApp.Services
             return new AuthenticateResponse(user, jwtToken, newRefreshToken.Token);
         }
 
+        /// <summary>
+        /// Сделать токен неактивным
+        /// </summary>
+        /// <param name="token">Действующий токен</param>
+        /// <param name="ipAddress">IP-адрес, с которого совершается запрос</param>
+        /// <returns></returns>
         public bool RevokeToken(string token, string ipAddress)
         {
             var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
@@ -138,7 +163,11 @@ namespace ChatApp.Services
 
             return true;
         }
-
+        /// <summary>
+        /// Проверяет, существует ли пользователь в базе данных
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>true, если пользователь существует</returns>
         public bool UserExists(string username)
         {
             var user = _context.Users.SingleOrDefault(u => u.Username == username);
@@ -151,7 +180,12 @@ namespace ChatApp.Services
                 return true;
             }
         }
-
+        /// <summary>
+        /// Добавляет пользователя в диалог
+        /// </summary>
+        /// <param name="username">Имя пользователя, которого необходимо добавить</param>
+        /// <param name="dialogId">Id диалога, в который необходимо добавить пользователя</param>
+        /// <returns>true, если пользователь был добавлен</returns>
         public bool AddUserToDialog(string username, int dialogId)
         {
             var user = _context.Users.SingleOrDefault(u => u.Username == username);
@@ -187,7 +221,12 @@ namespace ChatApp.Services
             _context.SaveChanges();
             return true;
         }
-
+        /// <summary>
+        /// Удаляет пользователя из диалога
+        /// </summary>
+        /// <param name="username">Имя пользователя, которого необходимо удалить</param>
+        /// <param name="dialogId">Id диалога, из которого необходимо удалить пользователя</param>
+        /// <returns>true, если пользователь был удален</returns>
         public bool RemoveUserFromDialog(string username, int dialogId)
         {
             var user = _context.Users.SingleOrDefault(u => u.Username == username);
@@ -226,7 +265,11 @@ namespace ChatApp.Services
             return true;
         }
 
-
+        /// <summary>
+        /// Получает имена пользователей, которые есть в диалоге
+        /// </summary>
+        /// <param name="dialogId">Id диалога, пользователей которых необходимо получить</param>
+        /// <returns>Список имен пользователей</returns>
         public List<string> GetNamesOfParticipiantsInDialogue(int dialogId)
         {
             var dialog = _context.Dialogs.Where(d => d.Id == dialogId).Include(d => d.UserDialog)
@@ -241,18 +284,20 @@ namespace ChatApp.Services
 
             return usernames.ToList();
         }
-
+        /// <summary>
+        /// Получает всех пользователей
+        /// </summary>
+        /// <returns>Всех пользователей</returns>
         public IEnumerable<User> GetAll()
         {
             return _context.Users;
         }
 
-        public User GetById(int id)
-        {
-            return _context.Users.Find(id);
-        }
-
-        //Методы помощники
+        /// <summary>
+        /// Метод "хэлпер" для генерации нового токена
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <returns>Сгенерируемый токен</returns>
         private string generateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -280,10 +325,13 @@ namespace ChatApp.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
+        /// <summary>
+        /// Создает токен обновления
+        /// </summary>
+        /// <param name="ipAddress">IP-адрес, с которого был отправлен запрос</param>
+        /// <returns>Токен обновления</returns>
         private RefreshToken generateRefreshToken(string ipAddress)
         {
-            //
             using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
             {
                 var randomBytes = new byte[64];

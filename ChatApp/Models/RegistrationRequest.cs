@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Models
 {
+    /// <summary>
+    /// Класс запроса на регистрацию пользователя
+    /// </summary>
     public class RegistrationRequest
     {
         [Required]

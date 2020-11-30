@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Models
 {
+    /// <summary>
+    /// Запрос на аннулирование токена
+    /// </summary>
     public class RevokeTokenRequest
     {
         public string Token { get; set; }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChatApp.HubProvider
 {
+    /// <summary>
+    /// Класс, который определяет, что является Context.UserIdentifier наших хабов
+    /// </summary>
     public class NameUserIdProvider : IUserIdProvider
     {
         public string GetUserId(HubConnectionContext connection)

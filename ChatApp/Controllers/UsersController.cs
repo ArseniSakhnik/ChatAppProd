@@ -29,6 +29,11 @@ namespace ChatApp.Controllers
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
         }
+        /// <summary>
+        /// Метод обработки запроса на регистрацию пользователя
+        /// </summary>
+        /// <param name="model">Модель запроса регистрации</param>
+        /// <returns>Статус 200 если регистрация прошла успешно</returns>
         [AllowAnonymous]
         [HttpPost("registration")]
         public IActionResult Registration([FromBody] RegistrationRequest model) 
@@ -43,7 +48,11 @@ namespace ChatApp.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Метод обработки запроса на аутентификацию пользователя
+        /// </summary>
+        /// <param name="model">Модель запроса аутентификации</param>
+        /// <returns>Статус 200 если пользователь аутентифицировался</returns>
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticateRequest model)
@@ -60,7 +69,10 @@ namespace ChatApp.Controllers
 
             return Ok(response);
         }
-
+        /// <summary>
+        /// Метод запроса на обновление токена
+        /// </summary>
+        /// <returns>Статус 200 если токен был обновлен</returns>
         [AllowAnonymous]
         [HttpPost("refresh-token")]
         public IActionResult RefreshToken()
@@ -75,6 +87,11 @@ namespace ChatApp.Controllers
 
             return Ok(response);
         }
+        /// <summary>
+        /// Метод запроса на аннулирование токена
+        /// </summary>
+        /// <param name="model">Модель запроса на аутентифицирование токена</param>
+        /// <returns>Статус 200 если токен был аннулирован</returns>
 
         [HttpPost("revoke-token")]
         public IActionResult RevokeToken([FromBody] RevokeTokenRequest model)
@@ -92,7 +109,11 @@ namespace ChatApp.Controllers
 
             return Ok(new { message = "Token revoked" });
         }
-
+        /// <summary>
+        /// Метод запроса на проверку существования пользователя
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("get")]
         public IActionResult Get([FromBody] UserExitstsRequest request)
@@ -129,7 +150,10 @@ namespace ChatApp.Controllers
 
             _httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
-
+        /// <summary>
+        /// Получение IP-адреса пользователя, отправившего запрос
+        /// </summary>
+        /// <returns>IP-адрес пользователя</returns>
         private string ipAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))

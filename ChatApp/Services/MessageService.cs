@@ -10,17 +10,19 @@ using System.Threading.Tasks;
 
 namespace ChatApp.Services
 {
-
+    /// <summary>
+    /// Интерфейс, определяющий сервис, с которым будет работать DialogHub
+    /// </summary>
     public interface IMessageService
     {
-        //bool SendMessage(int senderId, int recipientId, string text);
-        //List<Message> GetLastMessages(int senderId);
-        //List<Message> GetSenderAndRecipientMessages(int senderId, int recipientId);
         bool SendMessage(string username, int dialogId, string text);
         List<Dialog> GetDialogs(string username);
         bool CreateDialog(string firstUsername, string secondUsername, out int dialogId);
     }
 
+    /// <summary>
+    /// Класс, основной работой которого является работа с диалогами и отправка сообщений
+    /// </summary>
     public class MessageService : IMessageService
     {
         private DataContext _context;
@@ -28,7 +30,11 @@ namespace ChatApp.Services
         {
             _context = context;
         }
-
+        /// <summary>
+        /// Получает все диалоги пользователя по имени пользователя
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>Список диалогов пользователя</returns>
         public List<Dialog> GetDialogs(string username)
         {
             var user = _context.Users.Where(u => u.Username == username)
@@ -49,6 +55,13 @@ namespace ChatApp.Services
             return dialogs;
         }
 
+        /// <summary>
+        /// Отправляет сообщение в диалог
+        /// </summary>
+        /// <param name="username">Имя пользователя отправителя сообщения</param>
+        /// <param name="dialogId">Id диалога, в который отправляется сообщение</param>
+        /// <param name="text">Текст, который отправляется в диалог</param>
+        /// <returns>Возвращает true, если сообщение отправлно</returns>
         public bool SendMessage(string username, int dialogId, string text)
         {
 
@@ -85,6 +98,13 @@ namespace ChatApp.Services
             return true;
         }
 
+        /// <summary>
+        /// Создает диалог с двумя пользователями
+        /// </summary>
+        /// <param name="firstUsername">Имя первого пользователя</param>
+        /// <param name="secondUsername">Имя второго пользователя</param>
+        /// <param name="dialogId">Выходной параметр Id диалога</param>
+        /// <returns>Возвращает true, если диалог создан</returns>
         public bool CreateDialog(string firstUsername, string secondUsername, out int dialogId)
         {
             var firstUser = _context.Users.SingleOrDefault(u => u.Username == firstUsername);
